@@ -44,7 +44,7 @@ jobs:
           echo DB_NAME='${{ vars.DB_NAME }}' >> .env
           echo DB_PORT=${{ vars.DB_PORT }} >> .env
           echo MASTER_USER='${{ vars.MASTER_USER }}' >> .env
-          echo MASTER_PASSWORD='${{ vars.MASTER_PASSWORD }}' >> .env
+          echo MASTER_PASSWORD='${{ secrets.MASTER_PASSWORD }}' >> .env
 
       - name: Deploy to AWS Lambda          
         run: serverless deploy --stage prod
