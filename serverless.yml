@@ -1,0 +1,62 @@
+service: solutions-backend
+
+plugins:
+  - serverless-wsgi
+  - serverless-plugin-resource-tagging
+  - serverless-apigw-binary
+  - serverless-dotenv-plugin
+  
+useDotenv: true
+
+provider:
+  stage: ${opt:stage,'dev'} 
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  timeout: 30
+  environment:
+  ecr: 
+    images:
+      solutionsBackendImage: 
+        path: ./
+        platform: linux/amd64
+  stackTags:
+    group: solutionsBackend-${self:provider.stage}
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
+
+custom:  
+  wsgi:
+    app: app.app
+    packRequirements: false
+
+  apigwBinary:
+    types:
+      - 'multipart/form-data'
+
+  dotenv:
+    basePath: ./
+    include:
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - MASTER_USER
+      - MASTER_PASSWORD
+ 
+functions:
+  app:
+    timeout: 90
+    image:
+      name: solutionsBackendImage
+      command: 
+        - app.handler
+    tags:
+      subgroup: solutions.backend-${self:provider.stage}
+    events:
+      - http: 
+          method: ANY
+          path: /{proxy+}
+          cors:
+            origin: '*'
+            headers: '*'

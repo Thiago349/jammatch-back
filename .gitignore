@@ -1,0 +1,5 @@
+solutions-env
+.requirements
+__pycache__/
+*.pyc
+.env
