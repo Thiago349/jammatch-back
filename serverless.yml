@@ -1,4 +1,4 @@
-service: solutions-backend
+service: jammatch-backend
 
 plugins:
   - serverless-wsgi
