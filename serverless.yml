@@ -17,7 +17,7 @@ provider:
   environment:
   ecr: 
     images:
-      solutionsBackendImage: 
+      jammatch-img: 
         path: ./
         platform: linux/amd64
   stackTags:
@@ -48,7 +48,7 @@ functions:
   app:
     timeout: 90
     image:
-      name: solutionsBackendImage
+      name: jammatch-img
       command: 
         - app.handler
     tags:
