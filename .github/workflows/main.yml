@@ -24,9 +24,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Serverless Framework
-        run: npm install -g serverless
-
       - name: Install project dependencies
         run: npm install
 
@@ -39,9 +36,9 @@ jobs:
 
       - name: Deploy to AWS Lambda
         env:
-          ${{ vars.DB_HOST }}
-          ${{ vars.DB_NAME }}
-          ${{ vars.DB_PORT }}
-          ${{ vars.MASTER_USER }}
-          ${{ secrets.MASTER_PASSWORD }}
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          MASTER_USER: ${{ vars.MASTER_USER }}
+          MASTER_PASSWORD: ${{ secrets.MASTER_PASSWORD }}
         run: serverless deploy --stage prod
