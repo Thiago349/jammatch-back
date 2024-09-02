@@ -20,7 +20,7 @@ class UsersController(Resource):
             if 'page' in requestArgs.keys():
                 page = int(requestArgs['page'])
             
-            userEntities = UsersService.getUsers(limit, page)['data']
+            userEntities = UsersService.getUsers(limit, page)
             userDTOs = []
             for userEntity in userEntities:
                 userDTOs.append(UsersMapper.userEntityToDTO(userEntity))
@@ -33,7 +33,7 @@ class UsersController(Resource):
     def post(self):
         try:
             requestBody = request.json
-            paramsToCheck = ['name', 'description', 'username', 'email']
+            paramsToCheck = ['name', 'description', 'username', 'password', 'email']
             missingParams = []
             for param in paramsToCheck:
                 if (param in requestBody.keys()) == False:
@@ -41,7 +41,7 @@ class UsersController(Resource):
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
             
-            userEntity = UsersService.createUser(requestBody['name'], requestBody['description'], requestBody['username'], requestBody['email'])['data']
+            userEntity = UsersService.createUser(requestBody['name'], requestBody['description'], requestBody['username'], requestBody['password'], requestBody['email'])
             userDTO = UsersMapper.userEntityToDTO(userEntity)
             return userDTO, 201
         except Exception as e:
@@ -53,7 +53,7 @@ class UsersController(Resource):
 class UserController(Resource):
     def get(self, userId):
         try:
-            userEntity = UsersService.getUserById(userId)['data']
+            userEntity = UsersService.getUserById(userId)
             if userEntity == None:
                 return f"Bad Request: No request with {userId} id", 400
 

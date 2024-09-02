@@ -1,6 +1,13 @@
+import boto3
+import os
+import uuid
 from alchemy import db_session
 from .entity import User
-import uuid
+from ..utils.getSecretHash import getSecretHase
+
+cognitoClient = boto3.client('cognito-idp', region_name='us-east-1')
+COGNITO_CLIENT_ID = os.environ['COGNITO_CLIENT_ID']
+COGNITO_CLIENT_SECRET = os.environ['COGNITO_CLIENT_SECRET']
 
 
 def getUsersPage(limit: int, page: int):
@@ -29,7 +36,7 @@ def getUserById(userId: uuid.uuid4):
         return None 
     
 
-def createUser(name: str, description: str, username: str, email: str):
+def createUser(name: str, description: str, username: str, password: str, email: str):
     try:
         userEntity = User(
             name = name,
@@ -39,6 +46,18 @@ def createUser(name: str, description: str, username: str, email: str):
         )
         db_session.add(userEntity)
         db_session.flush()
+        
+        cognitoClient.sign_up(
+            ClientId=COGNITO_CLIENT_ID,
+            SecretHash=getSecretHase(username, COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET),
+            Username=username,
+            Password=password,
+            UserAttributes=[{
+                "Name": "email",
+                "Value": email
+            }]
+        )
+
         db_session.commit()
 
         return userEntity
