@@ -43,6 +43,8 @@ custom:
       - DB_PORT
       - MASTER_USER
       - MASTER_PASSWORD
+      - COGNITO_CLIENT_ID
+      - COGNITO_CLIENT_SECRET
  
 functions:
   app:
