@@ -45,6 +45,8 @@ jobs:
           echo DB_PORT=${{ vars.DB_PORT }} >> .env
           echo MASTER_USER='${{ vars.MASTER_USER }}' >> .env
           echo MASTER_PASSWORD='${{ secrets.MASTER_PASSWORD }}' >> .env
+          echo COGNITO_CLIENT_ID='${{ secrets.COGNITO_CLIENT_ID }}' >> .env
+          echo COGNITO_CLIENT_SECRET='${{ secrets.COGNITO_CLIENT_SECRET }}' >> .env
 
       - name: Deploy to AWS Lambda          
         run: serverless deploy --stage prod
