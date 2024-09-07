@@ -18,8 +18,10 @@ def authenticate(username: str, password: str):
                 'SECRET_HASH': getSecretHase(username, COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET)
             },
         )
+        
         return response
     except Exception as e:
+        print(e)
         return None
     
 

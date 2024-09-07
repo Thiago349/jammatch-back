@@ -21,6 +21,7 @@ class AuthController(Resource):
                 return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
             
             authDTO = AuthService.authenticate(requestBody['username'], requestBody['password'])
+            
             if authDTO:
                 return {
                     "token": authDTO['AuthenticationResult']['AccessToken'], 

@@ -39,7 +39,7 @@ class UsersController(Resource):
                 if (param in requestBody.keys()) == False:
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
+                return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
             
             userEntity = UsersService.createUser(requestBody['name'], requestBody['description'], requestBody['username'], requestBody['password'], requestBody['email'])
             userDTO = UsersMapper.userEntityToDTO(userEntity)
