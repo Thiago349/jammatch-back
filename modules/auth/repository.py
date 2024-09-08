@@ -1,6 +1,6 @@
 import boto3 
 import os
-from ..utils.getSecretHash import getSecretHase
+from ..utils.authUtils import getSecretHase
 
 cognitoClient = boto3.client('cognito-idp', region_name='us-east-1')
 COGNITO_CLIENT_ID = os.environ['COGNITO_CLIENT_ID']

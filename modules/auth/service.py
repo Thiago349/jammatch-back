@@ -1,4 +1,5 @@
 import modules.auth.repository as repository
+from modules.utils.authUtils import verifyToken
 
 
 class AuthService:  
@@ -7,6 +8,13 @@ class AuthService:
         return auth
     
 
-    def validate(token):
-        user = repository.validate(token)
-        return user
+    def validate(headers):
+        if ('Authorization' in headers) == False:
+            return None
+        
+        token = verifyToken(headers['Authorization'])
+        if token == None:
+            return None
+        
+        userInformation = repository.validate(token)
+        return userInformation

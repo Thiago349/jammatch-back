@@ -3,7 +3,7 @@ import os
 import uuid
 from alchemy import db_session
 from .entity import User
-from ..utils.getSecretHash import getSecretHase
+from ..utils.authUtils import getSecretHase
 
 cognitoClient = boto3.client('cognito-idp', region_name='us-east-1')
 COGNITO_CLIENT_ID = os.environ['COGNITO_CLIENT_ID']
@@ -26,10 +26,22 @@ def getUsersPage(limit: int, page: int):
 
 def getUserById(userId: uuid.uuid4):
     try:
-        users: User = db_session.query(User
+        user: User = db_session.query(User
             ).filter(User.id == userId
                 ).first()
-        return users
+        return user
+    except Exception as e:
+        print(f"ERROR: {e}")
+        db_session.rollback()
+        return None 
+    
+
+def getUserByUsername(username: str):
+    try:
+        user: User = db_session.query(User
+            ).filter(User.username == username
+                ).first()
+        return user
     except Exception as e:
         print(f"ERROR: {e}")
         db_session.rollback()

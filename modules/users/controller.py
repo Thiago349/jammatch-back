@@ -1,5 +1,6 @@
 from .service import UsersService
 from .mapper import UsersMapper
+from modules.auth.service import AuthService
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -12,6 +13,10 @@ api = Namespace(
 class UsersController(Resource):
     def get(self):
         try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
             requestArgs = request.args
             page = 1
             limit = 10
@@ -33,7 +38,7 @@ class UsersController(Resource):
     def post(self):
         try:
             requestBody = request.json
-            paramsToCheck = ['name', 'description', 'username', 'password', 'email']
+            paramsToCheck = ['name', 'username', 'password', 'email']
             missingParams = []
             for param in paramsToCheck:
                 if (param in requestBody.keys()) == False:
@@ -41,6 +46,9 @@ class UsersController(Resource):
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
             
+            if 'description' in requestBody:
+                requestBody['description'] = None
+                
             userEntity = UsersService.createUser(requestBody['name'], requestBody['description'], requestBody['username'], requestBody['password'], requestBody['email'])
             userDTO = UsersMapper.userEntityToDTO(userEntity)
             return userDTO, 201
@@ -53,9 +61,33 @@ class UsersController(Resource):
 class UserController(Resource):
     def get(self, userId):
         try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
             userEntity = UsersService.getUserById(userId)
             if userEntity == None:
                 return f"Bad Request: No request with {userId} id", 400
+
+            userDTO = UsersMapper.userEntityToDTO(userEntity)
+            return userDTO, 200
+        except Exception as e:
+            api.logger.error("Error: %s", str(e))
+            return {"message": f"Internal Server Error: {str(e)}"}, 500
+
+
+@api.route("/self")
+class UserController(Resource):
+    def get(self):
+        try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+            username = userInformation['Username']
+
+            userEntity = UsersService.getUserByUsername(username)
+            if userEntity == None:
+                return f"Bad Request: No request with {username} id", 400
 
             userDTO = UsersMapper.userEntityToDTO(userEntity)
             return userDTO, 200

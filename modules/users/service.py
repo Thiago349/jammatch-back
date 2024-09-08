@@ -13,6 +13,11 @@ class UsersService:
         return user
     
 
+    def getUserByUsername(username):
+        user = repository.getUserByUsername(username)
+        return user
+    
+
     def createUser(name, description, username, password, email):
         user = repository.createUser(name, description, username, password, email)
         return user
