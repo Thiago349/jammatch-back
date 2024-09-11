@@ -45,7 +45,9 @@ custom:
       - MASTER_PASSWORD
       - COGNITO_CLIENT_ID
       - COGNITO_CLIENT_SECRET
- 
+      - S3_BUCKET_ID
+      - S3_BUCKET_SECRET
+
 functions:
   app:
     timeout: 90
