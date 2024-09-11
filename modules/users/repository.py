@@ -1,16 +1,10 @@
-import boto3
-import os
+from services.cognito.client import CognitoClient
 import uuid
 from alchemy import db_session
 from .entity import User
-from ..utils.authUtils import getSecretHase
-
-cognitoClient = boto3.client('cognito-idp', region_name='us-east-1')
-COGNITO_CLIENT_ID = os.environ['COGNITO_CLIENT_ID']
-COGNITO_CLIENT_SECRET = os.environ['COGNITO_CLIENT_SECRET']
 
 
-def getUsersPage(limit: int, page: int):
+def getPage(limit: int, page: int):
     try:
         users: User = db_session.query(User
             ).order_by(User.created_at.desc()
@@ -24,7 +18,7 @@ def getUsersPage(limit: int, page: int):
         return None
     
 
-def getUserById(userId: uuid.uuid4):
+def getById(userId: uuid.uuid4):
     try:
         user: User = db_session.query(User
             ).filter(User.id == userId
@@ -36,7 +30,7 @@ def getUserById(userId: uuid.uuid4):
         return None 
     
 
-def getUserByUsername(username: str):
+def getByUsername(username: str):
     try:
         user: User = db_session.query(User
             ).filter(User.username == username
@@ -48,31 +42,18 @@ def getUserByUsername(username: str):
         return None 
     
 
-def createUser(name: str, description: str, username: str, password: str, email: str):
+def create(name: str, username: str, email: str):
     try:
-        userEntity = User(
+        user = User(
             name = name,
-            description = description,
             username = username,
             email = email
         )
-        db_session.add(userEntity)
+        db_session.add(user)
         db_session.flush()
-        
-        cognitoClient.sign_up(
-            ClientId=COGNITO_CLIENT_ID,
-            SecretHash=getSecretHase(username, COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET),
-            Username=username,
-            Password=password,
-            UserAttributes=[{
-                "Name": "email",
-                "Value": email
-            }]
-        )
-
         db_session.commit()
 
-        return userEntity
+        return user
     except Exception as e:
         print(f"ERROR: {e}")
         db_session.rollback()

@@ -1,6 +1,8 @@
 from .service import UsersService
 from .mapper import UsersMapper
 from modules.auth.service import AuthService
+from modules.profiles.service import ProfilesService
+from modules.profiles.mapper import ProfilesMapper
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -25,10 +27,10 @@ class UsersController(Resource):
             if 'page' in requestArgs.keys():
                 page = int(requestArgs['page'])
             
-            userEntities = UsersService.getUsers(limit, page)
+            userEntities = UsersService.getPage(limit, page)
             userDTOs = []
             for userEntity in userEntities:
-                userDTOs.append(UsersMapper.userEntityToDTO(userEntity))
+                userDTOs.append(UsersMapper.entityToDTO(userEntity))
             return userDTOs, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
@@ -45,12 +47,11 @@ class UsersController(Resource):
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
-            
-            if 'description' in requestBody:
-                requestBody['description'] = None
                 
-            userEntity = UsersService.createUser(requestBody['name'], requestBody['description'], requestBody['username'], requestBody['password'], requestBody['email'])
-            userDTO = UsersMapper.userEntityToDTO(userEntity)
+            userEntity, profileEntity = UsersService.create(requestBody['name'], requestBody['username'], requestBody['password'], requestBody['email'])
+            userDTO = UsersMapper.entityToDTO(userEntity)
+            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
+            userDTO['profile'] = profileDTO
             return userDTO, 201
         except Exception as e:
             api.logger.error("Error: %s", str(e))
@@ -65,11 +66,16 @@ class UserController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            userEntity = UsersService.getUserById(userId)
+            userEntity = UsersService.getById(userId)
             if userEntity == None:
                 return f"Bad Request: No request with {userId} id", 400
 
-            userDTO = UsersMapper.userEntityToDTO(userEntity)
+            userDTO = UsersMapper.entityToDTO(userEntity)
+            
+            profileEntity = ProfilesService.getByUserId(userDTO['id'])
+            if profileEntity != None:
+                userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
+
             return userDTO, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
@@ -85,11 +91,16 @@ class UserController(Resource):
                 return {"message": f"Unauthorized"}, 401
             username = userInformation['Username']
 
-            userEntity = UsersService.getUserByUsername(username)
+            userEntity = UsersService.getByUsername(username)
             if userEntity == None:
                 return f"Bad Request: No request with {username} id", 400
 
-            userDTO = UsersMapper.userEntityToDTO(userEntity)
+            userDTO = UsersMapper.entityToDTO(userEntity)
+
+            profileEntity = ProfilesService.getByUserId(userDTO['id'])
+            if profileEntity != None:
+                userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
+
             return userDTO, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
