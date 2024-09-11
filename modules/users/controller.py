@@ -68,7 +68,7 @@ class UserController(Resource):
 
             userEntity = UsersService.getById(userId)
             if userEntity == None:
-                return f"Bad Request: No request with {userId} id", 400
+                return f"Bad Request: No user with {userId} id", 400
 
             userDTO = UsersMapper.entityToDTO(userEntity)
             
@@ -93,7 +93,7 @@ class UserController(Resource):
 
             userEntity = UsersService.getByUsername(username)
             if userEntity == None:
-                return f"Bad Request: No request with {username} id", 400
+                return f"Bad Request: No user with {username} username", 400
 
             userDTO = UsersMapper.entityToDTO(userEntity)
 
