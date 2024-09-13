@@ -1,8 +1,8 @@
+import boto3 
 import os
 import werkzeug.datastructures
-from ..session import session
 
-client = session.client('s3')
+client = boto3.client('s3', region_name='us-east-1')
 S3_BUCKET_ID = os.environ['S3_BUCKET_ID']
 S3_BUCKET_SECRET = os.environ['S3_BUCKET_SECRET']
 
