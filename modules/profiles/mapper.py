@@ -7,9 +7,10 @@ class ProfilesMapper:
             'id': str(profile.id),
             'userId': str(profile.user_id),
             'description': profile.description,
-            'profileImage': profile.profile_image,
-            'bannerImage': profile.banner_image,
+            'profileImage': profile.photo_url,
+            'bannerImage': profile.banner_url,
             'createdAt': profile.created_at.isoformat(),
+            'name': profile.name
         }
 
         return profileDTO

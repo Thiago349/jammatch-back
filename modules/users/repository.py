@@ -1,4 +1,4 @@
-from services.cognito.client import CognitoClient
+from services.aws.cognito.client import CognitoClient
 import uuid
 from alchemy import db_session
 from .entity import User
@@ -42,10 +42,9 @@ def getByUsername(username: str):
         return None 
     
 
-def create(name: str, username: str, email: str):
+def create(username: str, email: str):
     try:
         user = User(
-            name = name,
             username = username,
             email = email
         )

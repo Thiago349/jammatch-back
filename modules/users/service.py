@@ -2,7 +2,7 @@ import os
 import modules.users.repository as repository
 from modules.profiles.service import ProfilesService
 
-from services.cognito.client import CognitoClient
+from services.aws.cognito.client import CognitoClient
 
 
 class UsersService:
@@ -23,6 +23,6 @@ class UsersService:
 
     def create(name, username, password, email):
         CognitoClient.signUp(username, password, email)
-        user = repository.create(name, username, email)
-        profile = ProfilesService.create(user.id)
+        user = repository.create(username, email)
+        profile = ProfilesService.create(user.id, name)
         return user, profile

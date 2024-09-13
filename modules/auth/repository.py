@@ -1,4 +1,4 @@
-from services.cognito.client import CognitoClient
+from services.aws.cognito.client import CognitoClient
 
 
 def authenticate(username: str, password: str):

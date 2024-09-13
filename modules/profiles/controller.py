@@ -9,7 +9,7 @@ api = Namespace(
 )
 
 
-@api.route("/<profileId>")
+@api.route("/<profileId>/photo")
 class ProfilesController(Resource):
     def put(self, profileId):
         try:
@@ -17,7 +17,11 @@ class ProfilesController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            profileEntity = ProfilesService.editProfile(profileId)
+            if ('profileImage' in request.files.keys()) == False:
+                return {"message": f"Bad Request: 'profileImage' required"}, 400
+
+            profileEntity = ProfilesService.editPhoto(profileId, request.files['profileImage'])
+            return 'TESTE', 200
             profileDTO = ProfilesMapper.entityToDTO(profileEntity)
             return profileDTO, 201
         except Exception as e:

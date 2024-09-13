@@ -3,10 +3,11 @@ from alchemy import db_session
 from .entity import Profile
     
 
-def create(userId: uuid.uuid4):
+def create(userId: uuid.uuid4, name: str):
     try:
         profile = Profile(
-            user_id = userId
+            user_id = userId,
+            name = name
         )
         db_session.add(profile)
         db_session.flush()
