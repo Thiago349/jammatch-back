@@ -2,7 +2,6 @@ service: jammatch-backend
 
 plugins:
   - serverless-wsgi
-  - serverless-plugin-resource-tagging
   - serverless-apigw-binary
   - serverless-dotenv-plugin
   
@@ -20,11 +19,6 @@ provider:
       jammatch-img: 
         path: ./
         platform: linux/amd64
-  stackTags:
-    group: solutionsBackend-${self:provider.stage}
-  apiGateway:
-    binaryMediaTypes:
-      - 'multipart/form-data'
 
 custom:  
   wsgi:
@@ -43,8 +37,6 @@ custom:
       - DB_PORT
       - MASTER_USER
       - MASTER_PASSWORD
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
       - COGNITO_CLIENT_ID
       - COGNITO_CLIENT_SECRET
       - S3_BUCKET_ID
