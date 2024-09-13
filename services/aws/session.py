@@ -1,12 +1,12 @@
 import boto3
 import os
 
-AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+ADMIN_ACCESS_KEY_ID = os.environ['ADMIN_ACCESS_KEY_ID']
+ADMIN_SECRET_ACCESS_KEY = os.environ['ADMIN_SECRET_ACCESS_KEY']
 
 
 session = boto3.Session(
-    aws_access_key_id = AWS_ACCESS_KEY_ID,
-    aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
+    aws_access_key_id = ADMIN_ACCESS_KEY_ID,
+    aws_secret_access_key = ADMIN_SECRET_ACCESS_KEY,
     region_name='us-east-1'
 )
