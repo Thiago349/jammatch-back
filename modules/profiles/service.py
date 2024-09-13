@@ -11,8 +11,8 @@ class ProfilesService:
         objectName = f'{profileId}-photo'
 
         BucketClient.uploadFile(file, bucketName, objectName)
-        profile = repository.editPhoto(profileId, file)
-        return profile
+        # profile = repository.editPhoto(profileId, file)
+        return 200
     
 
     def create(userId: uuid.uuid4, name: str):
