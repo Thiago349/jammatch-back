@@ -3,7 +3,7 @@ import uuid
 from alchemy import Base
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import Column, DateTime, String, Boolean
 
 
 class Profile(Base):
@@ -12,8 +12,8 @@ class Profile(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True))
     description = Column(String)
-    photo_url = Column(String)
-    banner_url = Column(String)
+    has_photo = Column(Boolean)
+    has_banner = Column(Boolean)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     deleted_at = Column(DateTime(timezone=True), server_default=None)
     name = Column(String)

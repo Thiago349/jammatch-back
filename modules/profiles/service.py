@@ -6,13 +6,13 @@ import modules.profiles.repository as repository
 from services.aws.s3.client import BucketClient
 
 class ProfilesService:
-    def editPhoto(profileId: uuid.uuid4, file: werkzeug.datastructures.FileStorage):
+    def editImage(profileId: uuid.uuid4, file: werkzeug.datastructures.FileStorage, imageType: str):
         bucketName = 'jammatch-bucket'
-        objectName = f'{profileId}-photo'
+        objectName = f'{profileId}-{imageType}'
 
         BucketClient.uploadFile(file, bucketName, objectName)
-        # profile = repository.editPhoto(profileId, file)
-        return 200
+        profile = repository.confirmImageStatus(profileId, imageType)
+        return profile
     
 
     def create(userId: uuid.uuid4, name: str):
