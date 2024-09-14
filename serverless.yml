@@ -46,13 +46,10 @@ custom:
 
 functions:
   app:
-    timeout: 90
     image:
       name: jammatch-img
       command: 
         - app.handler
-    tags:
-      subgroup: solutions.backend-${self:provider.stage}
     events:
       - http: 
           method: ANY

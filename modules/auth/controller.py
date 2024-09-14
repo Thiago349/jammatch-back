@@ -7,7 +7,7 @@ api = Namespace(
 )
 
 
-@api.route("/")
+@api.route("")
 class AuthController(Resource):
     def post(self):
         try:

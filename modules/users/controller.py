@@ -11,7 +11,7 @@ api = Namespace(
 )
 
 
-@api.route("/")
+@api.route("")
 class UsersController(Resource):
     def get(self):
         try:
