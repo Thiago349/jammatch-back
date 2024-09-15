@@ -19,15 +19,15 @@ provider:
       jammatch-img: 
         path: ./
         platform: linux/amd64
-  apiGateway:
-    maximumSize: 100
-    binaryMediaTypes:
-      - 'multipart/form-data'
 
 custom:  
   wsgi:
     app: app.app
     packRequirements: false
+
+  apigwBinary:
+    types:
+      - 'multipart/form-data'
 
   dotenv:
     basePath: ./
