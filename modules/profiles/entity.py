@@ -10,10 +10,11 @@ class Profile(Base):
     __tablename__ = "profiles"
     __table_args__ = {"schema": "public"}
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True))
+    main_id = Column(UUID(as_uuid=True))
     description = Column(String)
     has_photo = Column(Boolean)
     has_banner = Column(Boolean)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     deleted_at = Column(DateTime(timezone=True), server_default=None)
-    name = Column(String)
+    name = Column(String, nullable=False)
+    type = Column(String, nullable=False)

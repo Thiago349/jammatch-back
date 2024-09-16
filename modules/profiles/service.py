@@ -20,11 +20,11 @@ class ProfilesService:
         return profile
     
 
-    def create(userId: uuid.uuid4, name: str):
-        profile = repository.create(userId, name)
+    def create(mainId: uuid.uuid4, name: str, type: str):
+        profile = repository.create(mainId, name, type)
         return profile
     
 
-    def getByUserId(userId: uuid.uuid4):
-        profile = repository.getByUserId(userId)
+    def getByMainId(mainId: uuid.uuid4):
+        profile = repository.getByMainId(mainId)
         return profile

@@ -3,11 +3,12 @@ from alchemy import db_session
 from .entity import Profile
     
 
-def create(userId: uuid.uuid4, name: str):
+def create(mainId: uuid.uuid4, name: str, type: str):
     try:
         profile = Profile(
-            user_id = userId,
-            name = name
+            main_id = mainId,
+            name = name,
+            type = type
         )
 
         db_session.add(profile)
@@ -67,10 +68,10 @@ def confirmImageStatus(profileId: uuid.uuid4, imageType: str):
         return None 
     
 
-def getByUserId(userId: uuid.uuid4):
+def getByMainId(mainId: uuid.uuid4):
     try:
         profile: Profile = db_session.query(Profile
-            ).filter(Profile.user_id == userId
+            ).filter(Profile.main_id == mainId
                 ).first()
         return profile
     

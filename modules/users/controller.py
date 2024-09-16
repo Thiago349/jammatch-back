@@ -72,7 +72,7 @@ class UserController(Resource):
 
             userDTO = UsersMapper.entityToDTO(userEntity)
             
-            profileEntity = ProfilesService.getByUserId(userDTO['id'])
+            profileEntity = ProfilesService.getByMainId(userDTO['id'])
             if profileEntity != None:
                 userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
 
@@ -97,7 +97,7 @@ class UserController(Resource):
 
             userDTO = UsersMapper.entityToDTO(userEntity)
 
-            profileEntity = ProfilesService.getByUserId(userDTO['id'])
+            profileEntity = ProfilesService.getByMainId(userDTO['id'])
             if profileEntity != None:
                 userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
 
