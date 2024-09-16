@@ -22,6 +22,29 @@ def create(userId: uuid.uuid4, name: str):
         return None 
     
 
+def edit(profileId: uuid.uuid4, payload):
+    try:
+        profile: Profile = db_session.query(Profile
+            ).filter(Profile.id == profileId
+                ).first()
+
+        for key in payload:
+            if key == 'name':
+                profile.name = payload[key]
+            elif key == 'description':
+                profile.description = payload[key]
+
+        db_session.flush()
+        db_session.commit()
+        
+        return profile
+    
+    except Exception as e:
+        print(f"ERROR: {e}")
+        db_session.rollback()
+        return None 
+
+
 def confirmImageStatus(profileId: uuid.uuid4, imageType: str):
     try:
         profile: Profile = db_session.query(Profile

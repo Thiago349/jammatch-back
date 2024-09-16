@@ -9,6 +9,22 @@ api = Namespace(
 )
 
 
+@api.route("/<profileId>")
+class ProfilesController(Resource):
+    def put(self, profileId):
+        try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
+            profileEntity = ProfilesService.edit(profileId, request.json)
+            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
+            return profileDTO, 201
+        except Exception as e:
+            api.logger.error("Error: %s", str(e))
+            return {"message": f"Internal Server Error: {str(e)}"}, 500
+
+
 @api.route("/<profileId>/photo")
 class ProfilesController(Resource):
     def put(self, profileId):

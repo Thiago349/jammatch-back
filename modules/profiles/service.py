@@ -15,6 +15,11 @@ class ProfilesService:
         return profile
     
 
+    def edit(profileId: uuid.uuid4, payload: dict):
+        profile = repository.edit(profileId, payload)
+        return profile
+    
+
     def create(userId: uuid.uuid4, name: str):
         profile = repository.create(userId, name)
         return profile
