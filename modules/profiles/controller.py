@@ -1,6 +1,7 @@
 from .service import ProfilesService
 from .mapper import ProfilesMapper
 from modules.auth.service import AuthService
+from modules.roles.mapper import RolesMapper
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -11,6 +12,29 @@ api = Namespace(
 
 @api.route("/<profileId>")
 class ProfilesController(Resource):
+    def get(self, profileId):
+        try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
+            entities = ProfilesService.getById(profileId)
+            if entities == None:
+                return f"No profile with '{profileId}' id", 404
+            
+            profileEntity, roleEntities = entities
+            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
+
+            profileDTO['roles'] = []
+            for roleEntity in roleEntities:
+                profileDTO['roles'].append(RolesMapper.entityToDTO(roleEntity))
+
+            return profileDTO, 200
+        except Exception as e:
+            api.logger.error("Error: %s", str(e))
+            return {"message": f"Internal Server Error: {str(e)}"}, 500
+        
+
     def put(self, profileId):
         try:
             userInformation = AuthService.validate(request.headers)

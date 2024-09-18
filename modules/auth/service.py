@@ -1,10 +1,10 @@
-import modules.auth.repository as repository
+from modules.auth.repository import AuthRepository
 from modules.utils.authUtils import verifyToken
 
 
 class AuthService:  
     def authenticate(username, password):
-        auth = repository.authenticate(username, password)
+        auth = AuthRepository.authenticate(username, password)
         return auth
     
 
@@ -16,5 +16,5 @@ class AuthService:
         if token == None:
             return None
         
-        userInformation = repository.validate(token)
+        userInformation = AuthRepository.validate(token)
         return userInformation

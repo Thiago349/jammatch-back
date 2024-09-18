@@ -13,30 +13,6 @@ api = Namespace(
 
 @api.route("")
 class UsersController(Resource):
-    def get(self):
-        try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
-
-            requestArgs = request.args
-            page = 1
-            limit = 10
-            if 'limit' in requestArgs.keys():
-                limit = int(requestArgs['limit'])
-            if 'page' in requestArgs.keys():
-                page = int(requestArgs['page'])
-            
-            userEntities = UsersService.getPage(limit, page)
-            userDTOs = []
-            for userEntity in userEntities:
-                userDTOs.append(UsersMapper.entityToDTO(userEntity))
-            return userDTOs, 200
-        except Exception as e:
-            api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
-        
-    
     def post(self):
         try:
             requestBody = request.json
@@ -66,13 +42,12 @@ class UserController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            userEntity = UsersService.getById(userId)
+            userEntity, profileEntity = UsersService.getById(userId)
             if userEntity == None:
-                return f"Bad Request: No user with {userId} id", 400
+                return f"No user with '{userId}' id", 404
 
             userDTO = UsersMapper.entityToDTO(userEntity)
             
-            profileEntity = ProfilesService.getByMainId(userDTO['id'])
             if profileEntity != None:
                 userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
 
@@ -91,15 +66,14 @@ class UserController(Resource):
                 return {"message": f"Unauthorized"}, 401
             username = userInformation['Username']
 
-            userEntity = UsersService.getByUsername(username)
+            userEntity, profileEntity = UsersService.getByUsername(username)
             if userEntity == None:
-                return f"Bad Request: No user with {username} username", 400
+                return f"No user with {username} username", 404
 
             userDTO = UsersMapper.entityToDTO(userEntity)
 
-            profileEntity = ProfilesService.getByMainId(userDTO['id'])
             if profileEntity != None:
-                userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
+                userDTO['profileId'] = ProfilesMapper.entityToDTO(profileEntity)['id']
 
             return userDTO, 200
         except Exception as e:

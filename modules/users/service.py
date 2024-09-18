@@ -1,28 +1,23 @@
-import os
-import modules.users.repository as repository
+import uuid
+from modules.users.repository import UsersRepository
 from modules.profiles.service import ProfilesService
 
 from services.aws.cognito.client import CognitoClient
 
 
-class UsersService:
-    def getPage(limit, page):
-        users = repository.getPage(limit, page)
-        return users
+class UsersService: 
+    def getById(userId: uuid.uuid4):
+        user, profile = UsersRepository.getById(userId)
+        return user, profile
     
 
-    def getById(userId):
-        user = repository.getById(userId)
-        return user
+    def getByUsername(username: str):
+        user, profile = UsersRepository.getByUsername(username)
+        return user, profile
     
 
-    def getByUsername(username):
-        user = repository.getByUsername(username)
-        return user
-    
-
-    def create(name, username, password, email):
+    def create(name: str, username: str, password: str, email: str):
         CognitoClient.signUp(username, password, email)
-        user = repository.create(username, email)
+        user = UsersRepository.create(username, email)
         profile = ProfilesService.create(user.id, name)
         return user, profile
