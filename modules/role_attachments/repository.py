@@ -6,16 +6,16 @@ from .entity import RoleAttachment
 class RoleAttachmentsRepository:
     def create(profileId: uuid.uuid4, roleId: uuid.uuid4):
         try:
-            profile = RoleAttachment(
+            roleAttachment = RoleAttachment(
                 profile_id = profileId,
                 role_id = roleId
             )
 
-            db_session.add(profile)
+            db_session.add(roleAttachment)
             db_session.flush()
             db_session.commit()
 
-            return profile
+            return roleAttachment
         
         except Exception as e:
             print(f"ERROR: {e}")

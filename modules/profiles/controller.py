@@ -1,7 +1,6 @@
 from .service import ProfilesService
 from .mapper import ProfilesMapper
 from modules.auth.service import AuthService
-from modules.roles.mapper import RolesMapper
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -18,17 +17,10 @@ class ProfilesController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            entities = ProfilesService.getById(profileId)
-            if entities == None:
-                return f"No profile with '{profileId}' id", 404
+            profileDTO = ProfilesService.getById(profileId)
+            if profileDTO == None:
+                return f"Not Found: No profile with '{profileId}' id", 404
             
-            profileEntity, roleEntities = entities
-            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
-
-            profileDTO['roles'] = []
-            for roleEntity in roleEntities:
-                profileDTO['roles'].append(RolesMapper.entityToDTO(roleEntity))
-
             return profileDTO, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
@@ -41,8 +33,10 @@ class ProfilesController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            profileEntity = ProfilesService.edit(profileId, request.json)
-            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
+            profileDTO = ProfilesService.edit(profileId, request.json)
+            if profileDTO == None:
+                return f"Not Found: No profile with '{profileId}' id", 404
+            
             return profileDTO, 201
         except Exception as e:
             api.logger.error("Error: %s", str(e))
@@ -66,8 +60,10 @@ class ProfilesController(Resource):
             if (request.form['imageType'] in ['photo', 'banner']) == False:
                 return {"message": f"Bad Request: '{request.form['imageType']}' is not valid for 'imageType'"}, 400
             
-            profileEntity = ProfilesService.editImage(profileId, request.files['profileImage'], request.form['imageType'])
-            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
+            profileDTO = ProfilesService.editImage(profileId, request.files['profileImage'], request.form['imageType'])
+            if profileDTO == None:
+                return f"Not Found: No profile with '{profileId}' id", 404
+            
             return profileDTO, 201
         except Exception as e:
             api.logger.error("Error: %s", str(e))

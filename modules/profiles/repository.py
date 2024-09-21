@@ -32,6 +32,9 @@ class ProfilesRepository:
                 ).filter(Profile.id == profileId
                     ).first()
 
+            if profile is None:
+                return None
+            
             for key in payload:
                 if key == 'name':
                     profile.name = payload[key]
@@ -85,15 +88,3 @@ class ProfilesRepository:
             db_session.rollback()
             return None 
         
-
-    def getByMainId(mainId: uuid.uuid4):
-        try:
-            profile: Profile = db_session.query(Profile
-                ).filter(Profile.main_id == mainId
-                    ).first()
-            return profile
-        
-        except Exception as e:
-            print(f"ERROR: {e}")
-            db_session.rollback()
-            return None 

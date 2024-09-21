@@ -24,38 +24,12 @@ class UsersController(Resource):
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
                 
-            userEntity, profileEntity = UsersService.create(requestBody['name'], requestBody['username'], requestBody['password'], requestBody['email'])
-            userDTO = UsersMapper.entityToDTO(userEntity)
-            profileDTO = ProfilesMapper.entityToDTO(profileEntity)
-            userDTO['profile'] = profileDTO
+            userDTO = UsersService.create(requestBody['name'], requestBody['username'], requestBody['password'], requestBody['email'])
             return userDTO, 201
         except Exception as e:
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
-
-
-@api.route("/<userId>")
-class UserController(Resource):
-    def get(self, userId):
-        try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
-
-            userEntity, profileEntity = UsersService.getById(userId)
-            if userEntity == None:
-                return f"No user with '{userId}' id", 404
-
-            userDTO = UsersMapper.entityToDTO(userEntity)
-            
-            if profileEntity != None:
-                userDTO['profile'] = ProfilesMapper.entityToDTO(profileEntity)
-
-            return userDTO, 200
-        except Exception as e:
-            api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
-
+        
 
 @api.route("/self")
 class UserController(Resource):
@@ -66,15 +40,9 @@ class UserController(Resource):
                 return {"message": f"Unauthorized"}, 401
             username = userInformation['Username']
 
-            userEntity, profileEntity = UsersService.getByUsername(username)
-            if userEntity == None:
-                return f"No user with {username} username", 404
-
-            userDTO = UsersMapper.entityToDTO(userEntity)
-
-            if profileEntity != None:
-                userDTO['profileId'] = ProfilesMapper.entityToDTO(profileEntity)['id']
-
+            userDTO = UsersService.getByUsername(username)
+            if userDTO == None:
+                return f"Not Found: No user with '{username}' username", 404
             return userDTO, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))

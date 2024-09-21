@@ -35,6 +35,19 @@ class CognitoClient:
         return response
     
 
+    def refreshAuth(username, token):
+        response = client.initiate_auth(
+            ClientId=COGNITO_CLIENT_ID,
+            AuthFlow='REFRESH_TOKEN_AUTH',
+            AuthParameters={
+                'REFRESH_TOKEN': token,
+                'SECRET_HASH': getSecretHase(username, COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET)
+            },
+        )
+        
+        return response
+    
+
     def getUser(token):
         response = client.get_user(
             AccessToken=token

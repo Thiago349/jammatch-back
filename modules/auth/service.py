@@ -8,6 +8,11 @@ class AuthService:
         return auth
     
 
+    def refresh(username, refreshToken):
+        auth = AuthRepository.refresh(username, refreshToken)
+        return auth
+    
+
     def validate(headers):
         if ('Authorization' in headers) == False:
             return None

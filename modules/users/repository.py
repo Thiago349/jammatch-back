@@ -2,30 +2,20 @@ import uuid
 from alchemy import db_session
 from .entity import User
 from modules.profiles.entity import Profile
+from modules.roles.entity import Role
+from modules.role_attachments.entity import RoleAttachment
 
 
 class UsersRepository: 
-    def getById(userId: uuid.uuid4):
-        try:
-            user, profile = db_session.query(User, Profile
-                ).outerjoin(Profile, User.id == Profile.main_id
-                    ).filter(User.id == userId
-                        ).first()
-            return user, profile
-            
-        except Exception as e:
-            print(f"ERROR: {e}")
-            db_session.rollback()
-            return None 
-        
-
     def getByUsername(username: str):
         try:
-            user, profile = db_session.query(User, Profile
+            result = db_session.query(User, Profile, Role
                 ).outerjoin(Profile, User.id == Profile.main_id
-                    ).filter(User.username == username
-                        ).first()
-            return user, profile
+                    ).outerjoin(RoleAttachment, (Profile.id == RoleAttachment.profile_id) & (RoleAttachment.deleted_at == None)
+                        ).outerjoin(Role, RoleAttachment.role_id == Role.id 
+                            ).filter(User.username == username
+                                ).all()
+            return result
         
         except Exception as e:
             print(f"ERROR: {e}")

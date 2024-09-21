@@ -2,8 +2,11 @@ import uuid
 import werkzeug.datastructures
 
 from modules.profiles.repository import ProfilesRepository
+from modules.roles.mapper import RolesMapper
+from modules.profiles.mapper import ProfilesMapper
 
 from services.aws.s3.client import BucketClient
+
 
 class ProfilesService:
     def editImage(profileId: uuid.uuid4, file: werkzeug.datastructures.FileStorage, imageType: str):
@@ -12,12 +15,12 @@ class ProfilesService:
 
         BucketClient.uploadFile(file, bucketName, objectName)
         profile = ProfilesRepository.confirmImageStatus(profileId, imageType)
-        return profile
+        return None if profile is None else ProfilesMapper.entityToDTO(profile)
     
 
     def edit(profileId: uuid.uuid4, payload: dict):
         profile = ProfilesRepository.edit(profileId, payload)
-        return profile
+        return None if profile is None else ProfilesMapper.entityToDTO(profile)
     
 
     def create(mainId: uuid.uuid4, name: str, type: str):
@@ -27,19 +30,19 @@ class ProfilesService:
     
     def getById(profileId: uuid.uuid4):
         result = ProfilesRepository.getById(profileId)
-        
         if len(result) == 0:
             return None
             
         profile = result[0][0]
+        profileDTO = ProfilesMapper.entityToDTO(profile)
+
         roles = []
         for row in result:
             if row[1] != None:
-                roles.append(row[1])
+                roles.append(RolesMapper.entityToDTO(row[1]))
 
-        return profile, roles
+        profileDTO['roles'] = roles
+
+        return profileDTO
     
     
-    def getByMainId(mainId: uuid.uuid4):
-        profile = ProfilesRepository.getByMainId(mainId)
-        return profile

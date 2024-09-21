@@ -10,6 +10,14 @@ class AuthRepository:
             return None
         
 
+    def refresh(username: str, token: str):
+        try:
+            return CognitoClient.refreshAuth(username, token)
+        except Exception as e:
+            print("ERROR: ", e)
+            return None
+        
+
     def validate(token: str):
         try:
             return CognitoClient.getUser(token)

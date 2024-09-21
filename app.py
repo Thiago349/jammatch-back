@@ -23,9 +23,9 @@ def after_request(response):
 
 api = Api(
     blueprint,
-    title="Solutions server",
+    title="Jammatch HUB API",
     version="1.0",
-    description="Script center to automate internal processes",
+    description="",
 )
 
 register_swagger_apis(api)

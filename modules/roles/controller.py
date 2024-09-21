@@ -1,5 +1,4 @@
 from .service import RolesService
-from .mapper import RolesMapper
 
 from modules.auth.service import AuthService
 
@@ -20,18 +19,10 @@ class RolesController(Resource):
                 return {"message": f"Unauthorized"}, 401
 
             requestArgs = request.args
-            paramsToCheck = ['profileType']
-            missingParams = []
-            for param in paramsToCheck:
-                if (param in requestArgs.keys()) == False:
-                    missingParams.append(param)
-            if len(missingParams) > 0:
-                return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
-
-            roleEntities = RolesService.getByProfileType(requestArgs['profileType'])
-            roleDTOs = []
-            for roleEntity in roleEntities:
-                roleDTOs.append(RolesMapper.entityToDTO(roleEntity))
+            if ('profileType' in requestArgs.keys()) == False:
+                return {"message": f"Bad Request: 'profileType' required"}, 400
+            
+            roleDTOs = RolesService.getByProfileType(requestArgs['profileType'])
             return roleDTOs, 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
