@@ -26,7 +26,6 @@ class UsersService:
                 if row[2] != None:
                     roles.append(RolesMapper.entityToDTO(row[2]))
             userDTO['profile']['roles'] = roles
-            print(userDTO)
         else:
             userDTO['profile'] = None
 
