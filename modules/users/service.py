@@ -21,14 +21,15 @@ class UsersService:
         userDTO = UsersMapper.entityToDTO(user)
         if profile != None:
             userDTO['profile'] = ProfilesMapper.entityToDTO(profile)
+            roles = []
+            for row in result:
+                if row[2] != None:
+                    roles.append(RolesMapper.entityToDTO(row[2]))
+            userDTO['profile']['roles'] = roles
+            print(userDTO)
         else:
             userDTO['profile'] = None
 
-        roles = []
-        for row in result:
-            if row[2] != None:
-                roles.append(RolesMapper.entityToDTO(row[2]))
-        userDTO['roles'] = roles
         return userDTO
     
 
