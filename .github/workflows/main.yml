@@ -51,6 +51,8 @@ jobs:
           echo COGNITO_CLIENT_SECRET='${{ secrets.COGNITO_CLIENT_SECRET }}' >> .env
           echo S3_BUCKET_ID='${{ secrets.S3_BUCKET_ID }}' >> .env
           echo S3_BUCKET_SECRET='${{ secrets.S3_BUCKET_SECRET }}' >> .env
+          echo SPOTIFY_CLIENT_ID='${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
+          echo SPOTIFY_CLIENT_SECRET='${{ secrets.SPOTIFY_CLIENT_SECRET }}' >> .env
 
       - name: Deploy to AWS Lambda          
         run: serverless deploy --stage prod
