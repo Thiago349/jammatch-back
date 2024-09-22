@@ -43,6 +43,8 @@ custom:
       - COGNITO_CLIENT_SECRET
       - S3_BUCKET_ID
       - S3_BUCKET_SECRET
+      - SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET
 
 functions:
   app:
