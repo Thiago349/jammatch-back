@@ -53,6 +53,7 @@ jobs:
           echo S3_BUCKET_SECRET='${{ secrets.S3_BUCKET_SECRET }}' >> .env
           echo SPOTIFY_CLIENT_ID='${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
           echo SPOTIFY_CLIENT_SECRET='${{ secrets.SPOTIFY_CLIENT_SECRET }}' >> .env
+          echo SPOTIFY_REDIRECT_URI='${{ secrets.SPOTIFY_REDIRECT_URI }}' >> .env
 
       - name: Deploy to AWS Lambda          
         run: serverless deploy --stage prod

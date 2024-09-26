@@ -45,6 +45,7 @@ custom:
       - S3_BUCKET_SECRET
       - SPOTIFY_CLIENT_ID
       - SPOTIFY_CLIENT_SECRET
+      - SPOTIFY_REDIRECT_URI
 
 functions:
   app:
