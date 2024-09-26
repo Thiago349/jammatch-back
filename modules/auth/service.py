@@ -14,7 +14,7 @@ class AuthService:
     
 
     def validate(headers):
-        if ('Authorization' in headers) == False:
+        if 'Authorization' not in headers:
             return None
         
         token = verifyToken(headers['Authorization'])

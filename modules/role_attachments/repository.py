@@ -1,6 +1,6 @@
 import uuid
 from alchemy import db_session
-from .entity import RoleAttachment
+from modules.role_attachments.entity import RoleAttachment
 
 
 class RoleAttachmentsRepository:

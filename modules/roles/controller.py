@@ -1,4 +1,4 @@
-from .service import RolesService
+from modules.roles.service import RolesService
 
 from modules.auth.service import AuthService
 
@@ -19,7 +19,7 @@ class RolesController(Resource):
                 return {"message": f"Unauthorized"}, 401
 
             requestArgs = request.args
-            if ('profileType' in requestArgs.keys()) == False:
+            if 'profileType' not in requestArgs.keys():
                 return {"message": f"Bad Request: 'profileType' required"}, 400
             
             roleDTOs = RolesService.getByProfileType(requestArgs['profileType'])

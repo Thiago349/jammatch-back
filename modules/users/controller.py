@@ -1,5 +1,5 @@
-from .service import UsersService
-from .mapper import UsersMapper
+from modules.users.service import UsersService
+from modules.users.mapper import UsersMapper
 from modules.auth.service import AuthService
 from modules.profiles.service import ProfilesService
 from modules.profiles.mapper import ProfilesMapper
@@ -19,7 +19,7 @@ class UsersController(Resource):
             paramsToCheck = ['name', 'username', 'password', 'email']
             missingParams = []
             for param in paramsToCheck:
-                if (param in requestBody.keys()) == False:
+                if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400

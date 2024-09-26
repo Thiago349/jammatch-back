@@ -1,4 +1,4 @@
-from .service import AuthService
+from modules.auth.service import AuthService
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -15,7 +15,7 @@ class AuthController(Resource):
             paramsToCheck = ['username', 'password']
             missingParams = []
             for param in paramsToCheck:
-                if (param in requestBody.keys()) == False:
+                if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
@@ -42,7 +42,7 @@ class AuthController(Resource):
             paramsToCheck = ['username', 'refreshToken']
             missingParams = []
             for param in paramsToCheck:
-                if (param in requestBody.keys()) == False:
+                if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400

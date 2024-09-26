@@ -1,5 +1,5 @@
-from .service import SpotifyAttachmentsService
-from .mapper import SpotifyAttachmentsMapper
+from modules.spotify_attachments.service import SpotifyAttachmentsService
+from modules.spotify_attachments.mapper import SpotifyAttachmentsMapper
 
 from modules.auth.service import AuthService
 from modules.profiles.service import ProfilesService
@@ -26,7 +26,7 @@ class SpotifyAttachmentsController(Resource):
             paramsToCheck = ['userId', 'spotifyId']
             missingParams = []
             for param in paramsToCheck:
-                if (param in requestBody.keys()) == False:
+                if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400

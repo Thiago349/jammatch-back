@@ -1,6 +1,6 @@
 import uuid
 from alchemy import db_session
-from .entity import SpotifyAttachment
+from modules.spotify_attachments.entity import SpotifyAttachment
 
 
 class SpotifyAttachmentsRepository:

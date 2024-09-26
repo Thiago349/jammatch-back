@@ -1,5 +1,5 @@
-from .service import RoleAttachmentsService
-from .mapper import RoleAttachmentsMapper
+from modules.role_attachments.service import RoleAttachmentsService
+from modules.role_attachments.mapper import RoleAttachmentsMapper
 
 from modules.auth.service import AuthService
 from modules.profiles.service import ProfilesService
@@ -26,7 +26,7 @@ class RoleAttachmentsController(Resource):
             paramsToCheck = ['profileId', 'roleId']
             missingParams = []
             for param in paramsToCheck:
-                if (param in requestBody.keys()) == False:
+                if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
                 return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400

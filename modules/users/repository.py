@@ -1,6 +1,6 @@
 import uuid
 from alchemy import db_session
-from .entity import User
+from modules.users.entity import User
 from modules.profiles.entity import Profile
 from modules.roles.entity import Role
 from modules.role_attachments.entity import RoleAttachment

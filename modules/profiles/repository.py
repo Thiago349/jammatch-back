@@ -1,7 +1,7 @@
 import uuid
 from alchemy import db_session
 from sqlalchemy import and_
-from .entity import Profile
+from modules.profiles.entity import Profile
 from modules.roles.entity import Role
 from modules.role_attachments.entity import RoleAttachment
     

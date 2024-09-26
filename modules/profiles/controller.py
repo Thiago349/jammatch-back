@@ -1,5 +1,5 @@
-from .service import ProfilesService
-from .mapper import ProfilesMapper
+from modules.profiles.service import ProfilesService
+from modules.profiles.mapper import ProfilesMapper
 from modules.auth.service import AuthService
 from flask_restx import Namespace, Resource
 from flask import request
@@ -51,13 +51,13 @@ class ProfilesController(Resource):
             if userInformation == None: 
                 return {"message": f"Unauthorized"}, 401
 
-            if ('profileImage' in request.files.keys()) == False:
+            if 'profileImage' not in request.files.keys():
                 return {"message": f"Bad Request: 'profileImage' required"}, 400
             
-            if ('imageType' in request.form.keys()) == False:
+            if 'imageType' not in request.form.keys():
                 return {"message": f"Bad Request: 'imageType' required"}, 400
 
-            if (request.form['imageType'] in ['photo', 'banner']) == False:
+            if request.form['imageType'] not in ['photo', 'banner']:
                 return {"message": f"Bad Request: '{request.form['imageType']}' is not valid for 'imageType'"}, 400
             
             profileDTO = ProfilesService.editImage(profileId, request.files['profileImage'], request.form['imageType'])
