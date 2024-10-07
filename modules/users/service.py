@@ -5,6 +5,7 @@ from modules.profiles.service import ProfilesService
 from modules.users.mapper import UsersMapper
 from modules.roles.mapper import RolesMapper
 from modules.profiles.mapper import ProfilesMapper
+from modules.spotify_attachments.mapper import SpotifyAttachmentsMapper
 
 from services.aws.cognito.client import CognitoClient
 
@@ -17,18 +18,23 @@ class UsersService:
 
         user = result[0][0]
         profile = result[0][1]
+        spotifyAttachment = result[0][2]
 
         userDTO = UsersMapper.entityToDTO(user)
+        if spotifyAttachment != None:
+            userDTO['spotify'] = SpotifyAttachmentsMapper.entityToDTO(spotifyAttachment)
+        else:
+            userDTO['spotify'] = None
+
         if profile != None:
             userDTO['profile'] = ProfilesMapper.entityToDTO(profile)
             roles = []
             for row in result:
-                if row[2] != None:
-                    roles.append(RolesMapper.entityToDTO(row[2]))
+                if row[3] != None:
+                    roles.append(RolesMapper.entityToDTO(row[3]))
             userDTO['profile']['roles'] = roles
         else:
             userDTO['profile'] = None
-
         return userDTO
     
 
