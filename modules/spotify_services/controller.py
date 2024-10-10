@@ -54,3 +54,23 @@ class RolesController(Resource):
         except Exception as e:
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
+
+
+@api.route("/auth/refresh")
+class RolesController(Resource):
+    def post(self):
+        try:
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
+            requestBody = request.json
+            if 'refreshToken' not in requestBody.keys():
+                return {"message": f"Bad Request: 'refreshToken' required"}, 400
+            
+            REFRESH_TOKEN = requestBody['refreshToken']
+
+            return SpotifyClient.refresh(REFRESH_TOKEN), 201
+        except Exception as e:
+            api.logger.error("Error: %s", str(e))
+            return {"message": f"Internal Server Error: {str(e)}"}, 500

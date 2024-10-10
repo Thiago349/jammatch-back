@@ -30,6 +30,25 @@ class SpotifyClient:
         return None
 
 
+    def refresh(refreshToken):
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+        data = {
+            "refresh_token": refreshToken,
+            "grant_type": 'refresh_token',
+            "client_id": SPOTIFY_CLIENT_ID,
+            "client_secret": SPOTIFY_CLIENT_SECRET
+        }
+
+        response = requests.post(f"https://accounts.spotify.com/api/token", data=data, headers=headers)
+        auth = json.loads(response.text)
+        if response.status_code == 200:
+            return auth
+        return None
+    
+
     def getGenres(headers):
         response = requests.get(f"{SPOTIFY_BASE_URL}/v1/recommendations/available-genre-seeds", headers=headers)
         genreSeeds = json.loads(response.text)
