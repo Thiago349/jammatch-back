@@ -5,7 +5,7 @@ from modules.roles.controller import api as roles_api
 from modules.role_attachments.controller import api as role_attachments_api
 from modules.spotify_services.controller import api as spotify_api
 from modules.spotify_attachments.controller import api as spotify_attachments_api
-from modules.lab_services import api as lab_services_api
+from modules.lab_services.controller import api as lab_services_api
 
 def register_swagger_apis(api):
     api.add_namespace(auth_api)
