@@ -11,7 +11,7 @@ api = Namespace(
 
 
 @api.route("/random")
-class RolesController(Resource):
+class LabServicesController(Resource):
     def post(self):
         try:
             userInformation = AuthService.validate(request.headers)
