@@ -67,3 +67,17 @@ class SpotifyClient:
             print(self)
             return None
         return json.loads(response.text)
+    
+
+    def getSpotifyRecommendations(token, params):
+
+
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.get(f"{SPOTIFY_BASE_URL}/v1/recommendations", headers=headers, params=params)
+        print(response.status_code)   
+        return json.loads(response.text)
+    
