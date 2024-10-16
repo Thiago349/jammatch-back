@@ -6,7 +6,7 @@ class RolesMapper:
         roleDTO = {
             'id': str(role.id),
             'label': str(role.label),
-            'roleId': str(role.profile_type)
+            'profileType': str(role.profile_type)
         }
 
         return roleDTO

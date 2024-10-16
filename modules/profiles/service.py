@@ -40,9 +40,8 @@ class ProfilesService:
         for row in result:
             if row[1] != None:
                 roles.append(RolesMapper.entityToDTO(row[1]))
-
+                roles[len(roles) - 1]['roleAttachments'] = row[2].id
         profileDTO['roles'] = roles
-
         return profileDTO
     
     

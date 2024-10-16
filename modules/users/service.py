@@ -32,6 +32,7 @@ class UsersService:
             for row in result:
                 if row[3] != None:
                     roles.append(RolesMapper.entityToDTO(row[3]))
+                    roles[len(roles) - 1]['roleAttachmentId'] = str(row[4].id)
             userDTO['profile']['roles'] = roles
         else:
             userDTO['profile'] = None

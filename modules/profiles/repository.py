@@ -76,7 +76,7 @@ class ProfilesRepository:
 
     def getById(profileId: uuid.uuid4):
         try:
-            result = db_session.query(Profile, Role
+            result = db_session.query(Profile, Role, RoleAttachment
                 ).outerjoin(RoleAttachment, (Profile.id == RoleAttachment.profile_id) & (RoleAttachment.deleted_at == None)
                     ).outerjoin(Role, RoleAttachment.role_id == Role.id 
                         ).filter(Profile.id == profileId
