@@ -18,7 +18,7 @@ class LabServicesController(Resource):
             userInformation = AuthService.validate(request.headers)
             if userInformation is None:
                 return {"message": "Unauthorized"}, 401
-
+            
             requestBody = request.json
             if 'spotifyToken' not in requestBody.keys():
                 return {"message": "Bad Request: 'spotifyToken' required"}, 400

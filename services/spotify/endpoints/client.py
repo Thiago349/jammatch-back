@@ -78,6 +78,10 @@ class SpotifyClient:
         }
 
         response = requests.get(f"{SPOTIFY_BASE_URL}/v1/recommendations", headers=headers, params=params)
-        print(response.status_code)   
-        return json.loads(response.text)
+        print(response.status_code)
+        spotifyRecommendations = json.loads(response.text)
+        if response.status_code != 200:
+            print(spotifyRecommendations)
+            return None   
+        return spotifyRecommendations
     
