@@ -9,6 +9,25 @@ api = Namespace(
 )
 
 
+@api.route("")
+class ProfilesController(Resource):
+    def get(self):
+        try:
+            limit = int(request.args['limit']) if 'limit' in request.args.keys() else 10
+            page = int(request.args['page']) if 'page' in request.args.keys() else 1
+            searchText = request.args['searchText'] if 'searchText' in request.args.keys() else None
+
+            userInformation = AuthService.validate(request.headers)
+            if userInformation == None: 
+                return {"message": f"Unauthorized"}, 401
+
+            profileDTOs = ProfilesService.search(limit, page, searchText)
+            return profileDTOs, 200
+        except Exception as e:
+            api.logger.error("Error: %s", str(e))
+            return {"message": f"Internal Server Error: {str(e)}"}, 500
+
+
 @api.route("/<profileId>")
 class ProfilesController(Resource):
     def get(self, profileId):

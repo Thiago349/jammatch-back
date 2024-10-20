@@ -9,6 +9,14 @@ from services.aws.s3.client import BucketClient
 
 
 class ProfilesService:
+    def search(limit: int, page: int, searchText = None):
+        profiles = ProfilesRepository.search(limit, page, searchText)
+        profileDTOs = []
+        for profile in profiles:
+            profileDTOs.append(ProfilesMapper.entityToDTO(profile))
+        return profileDTOs
+
+
     def editImage(profileId: uuid.uuid4, file: werkzeug.datastructures.FileStorage, imageType: str):
         bucketName = 'jammatch-bucket'
         objectName = f'{profileId}-{imageType}'

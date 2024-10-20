@@ -6,6 +6,22 @@ from modules.roles.entity import Role
 from modules.role_attachments.entity import RoleAttachment
     
 class ProfilesRepository:
+    def search(limit: int, page: int, searchText = None):
+        try:
+            offset = (page - 1) * limit
+            result = db_session.query(Profile
+                ).offset(offset
+                    ).limit(limit
+                        ).all()
+            print(result)
+            return result
+        
+        except Exception as e:
+            print(f"ERROR: {e}")
+            db_session.rollback()
+            return None 
+
+
     def create(mainId: uuid.uuid4, name: str, type: str):
         try:
             profile = Profile(

@@ -25,9 +25,10 @@ class SpotifyClient:
         response = requests.post(f"https://accounts.spotify.com/api/token", data=data, headers=headers)
         auth = json.loads(response.text)
         
-        if response.status_code == 200:
-            return auth
-        return None
+        if response.status_code != 200:
+            print(auth)
+            return None
+        return auth
 
 
     def refresh(refreshToken):
@@ -44,42 +45,50 @@ class SpotifyClient:
 
         response = requests.post(f"https://accounts.spotify.com/api/token", data=data, headers=headers)
         auth = json.loads(response.text)
-        if response.status_code == 200:
-            return auth
-        return None
+        
+        if response.status_code != 200:
+            print(auth)
+            return None
+        return auth
     
 
-    def getGenres(headers):
+    def getGenres(token):
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+
         response = requests.get(f"{SPOTIFY_BASE_URL}/v1/recommendations/available-genre-seeds", headers=headers)
         genreSeeds = json.loads(response.text)
 
         if response.status_code != 200:
             print(genreSeeds)
             return None
-        return json.loads(response.text)
+        return genreSeeds
     
 
-    def getSelf(headers):
+    def getSelf(token):
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+
         response = requests.get(f"{SPOTIFY_BASE_URL}/v1/me", headers=headers)
         self = json.loads(response.text)
 
         if response.status_code != 200:
             print(self)
             return None
-        return json.loads(response.text)
+        return self
     
 
     def getSpotifyRecommendations(token, params):
-
-
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"
         }
 
         response = requests.get(f"{SPOTIFY_BASE_URL}/v1/recommendations", headers=headers, params=params)
-        print(response.status_code)
         spotifyRecommendations = json.loads(response.text)
+
         if response.status_code != 200:
             print(spotifyRecommendations)
             return None   

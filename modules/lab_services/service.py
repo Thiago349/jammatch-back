@@ -1,5 +1,6 @@
 import random
 from services.spotify.endpoints.client import SpotifyClient
+from modules.lab_services.mapper import LabServicesMapper
 
 class LabServicesService:
     def generateRamdomPlaylist(spotifyToken):
@@ -14,38 +15,24 @@ class LabServicesService:
             "target_loudness": round(random.uniform(-60.0, 0.0), 2),
             "target_happiness": round(random.uniform(0.0, 1.0), 2)
         }
-        formatedParams = {}
-        for key, value in randomParams.items():
-            parts = key.split('_')
-
-            formatedParams[parts[1]] = value
+        paramsDTO = LabServicesMapper.spotifyParamsToDTO(randomParams)
 
         randomParams["limit"] = 10
 
         spotifyRecommendations = SpotifyClient.getSpotifyRecommendations(spotifyToken, randomParams)
-        if "tracks" in spotifyRecommendations:
-            recommendations = []
+        if spotifyRecommendations is not None:
+            trackDTOs = []
             for track in spotifyRecommendations['tracks']:
-                trackInfo = {
-                    'trackName': track['name'],
-                    'trackId': track['id'],
-                    'artists': [artist['name'] for artist in track['artists']],
-                    'album': track['album']['name'],
-                    'durationMs': track['duration_ms']
-                }
-                recommendations.append(trackInfo)
+                trackDTO = LabServicesMapper.spotifyTrackToDTO(track)
+                trackDTOs.append(trackDTO)
 
             playlist = {
-                "parameters": formatedParams,
-                "tracks": recommendations,
+                "parameters": paramsDTO,
+                "tracks": trackDTOs,
                 "type": "SPOTIFY"
             }
+            return playlist
         else:
-            playlist = {
-                "parameters": formatedParams,
-                "tracks": "No recommendations found",
-                "type": "SPOTIFY"
-            }
+            return None
         
         
-        return playlist

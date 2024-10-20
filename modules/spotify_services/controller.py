@@ -25,12 +25,8 @@ class RolesController(Resource):
             TOKEN = requestArgs['userToken']
             if TOKEN is None:
                 return {"message": f"Unauthorized"}, 401
-            
-            headers = {
-                "Authorization": f"Bearer {TOKEN}"
-            }
 
-            return SpotifyClient.getSelf(headers), 200
+            return SpotifyClient.getSelf(TOKEN), 200
         except Exception as e:
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
