@@ -1,5 +1,5 @@
 class LabServicesMapper:
-    def spotifyTrackToDTO(track):
+    def spotifyTrackToTrackDTO(track):
         trackDTO = {
             'id': track['id'],
             'name': track['name'],
@@ -10,10 +10,19 @@ class LabServicesMapper:
         return trackDTO
     
 
-    def spotifyParamsToDTO(params):
+    def spotifyParamsToParamsDTO(params):
         paramsDTO = {}
         for key, value in params.items():
             parts = key.split('_')
             paramsDTO[parts[1]] = value
-
         return paramsDTO
+    
+
+    def playlistDTO(paramsDTO, trackDTOs, type, name):
+        playlistDTO = {
+            "name": name,
+            "parameters": paramsDTO,
+            "tracks": trackDTOs,
+            "type": type
+        }
+        return playlistDTO
