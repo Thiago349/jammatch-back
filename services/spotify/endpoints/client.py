@@ -94,3 +94,41 @@ class SpotifyClient:
             return None   
         return spotifyRecommendations
     
+
+    def postPlaylist(token, userId, name):
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "name": name,
+            "public": 'false'
+        }
+        
+        response = requests.post(f"{SPOTIFY_BASE_URL}/v1/users/{userId}/playlists", headers=headers, json=data)
+        playlist = json.loads(response.text)
+
+        if response.status_code != 201:
+            print(playlist)
+            return None   
+        return playlist
+    
+
+    def postPlaylistTracks(token, playlistId, uris):
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "uris": uris
+        }
+
+        response = requests.post(f"{SPOTIFY_BASE_URL}/v1/playlists/{playlistId}/tracks", headers=headers, json=data)
+        playlistItens = json.loads(response.text)
+
+        if response.status_code != 201:
+            print(playlistItens)
+            return None   
+        return playlistItens
