@@ -22,11 +22,14 @@ class UsersController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
+                raise Exception(f"Bad Request: '{', '.join(missingParams)}' required", 400)
                 
             userDTO = UsersService.create(requestBody['name'], requestBody['username'], requestBody['password'], requestBody['email'])
             return userDTO, 201
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
         
@@ -37,13 +40,18 @@ class UserController(Resource):
         try:
             userInformation = AuthService.validate(request.headers)
             if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
+
             username = userInformation['Username']
 
             userDTO = UsersService.getByUsername(username)
             if userDTO == None:
-                return f"Not Found: No user with '{username}' username", 404
+                raise Exception(f"Not Found: No user with '{username}' username", 404)
+
             return userDTO, 200
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500

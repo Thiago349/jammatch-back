@@ -19,7 +19,8 @@ class RoleAttachmentsController(Resource):
         try:
             userInformation = AuthService.validate(request.headers)
             if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
+
             username = userInformation['Username']
 
             requestBody = request.json
@@ -29,20 +30,25 @@ class RoleAttachmentsController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
+                raise Exception(f"Bad Request: '{', '.join(missingParams)}' required", 400)
 
             userDTO = UsersService.getByUsername(username)
             if userDTO == None:
-                return f"No user with {username} username", 404
+                raise Exception(f"No user with {username} username", 404)
 
             if userDTO['profile'] and userDTO['profile']['id'] != requestBody['profileId']:
-                return {"message": f"Forbidden"}, 403
+                raise Exception("Forbidden", 403)
             
             roleAttachmentDTO = RoleAttachmentsService.create(requestBody['profileId'], requestBody['roleId'])
             if roleAttachmentDTO is None:
-                return {"message": f"Role already exists for this profile"}, 409
+                raise Exception("Role already exists for this profile", 409)
+            
             return roleAttachmentDTO, 201
+        
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
 
@@ -53,22 +59,30 @@ class RoleAttachmentsController(Resource):
         try:
             userInformation = AuthService.validate(request.headers)
             if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
+    
             username = userInformation['Username']
 
             userDTO = UsersService.getByUsername(username)
             if userDTO == None:
-                return {"message": f"No user with {username} username"}, 404
+                raise Exception(f"No user with {username} username", 404)
 
             roleAttachmentStatus = RoleAttachmentsService.delete(roleAttachmentId, userDTO['profile']['id'])
             print(roleAttachmentStatus)
-            if roleAttachmentStatus == 201: 
-                return {"message": f"Succeeded"}, 201
+            if roleAttachmentStatus == 201:
+                raise Exception("Succeeded", 201)
+
             if roleAttachmentStatus == 403: 
-                return {"message": f"Forbidden"}, 403
+                raise Exception("Forbidden", 403)
+
             if roleAttachmentStatus == 404: 
-                return {"message": f"No role attachment with '{roleAttachmentId}' id"}, 404
-            return {"message": f"Internal Server Error"}, 500
+                raise Exception(f"No role attachment with '{roleAttachmentId}' id", 404)
+
+            raise Exception("Internal Server Error", 500)
+
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500

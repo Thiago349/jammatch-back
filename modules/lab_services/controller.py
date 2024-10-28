@@ -17,17 +17,20 @@ class LabServicesController(Resource):
         try:
             userInformation = AuthService.validate(request.headers)
             if userInformation is None:
-                return {"message": "Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
             
             requestBody = request.json
             if 'spotifyToken' not in requestBody.keys():
-                return {"message": "Bad Request: 'spotifyToken' required"}, 400
+                raise Exception("Bad Request: 'spotifyToken' required", 400)
 
             spotifyToken = requestBody['spotifyToken']
             
             return LabServicesService.generateRamdomPlaylist(spotifyToken), 201
 
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
     
