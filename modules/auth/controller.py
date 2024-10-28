@@ -18,7 +18,7 @@ class AuthController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
+                raise Exception(f"Bad Request: {', '.join(missingParams)}", 400)
             
             authDTO = AuthService.authenticate(requestBody['username'], requestBody['password'])
             
@@ -28,8 +28,12 @@ class AuthController(Resource):
                     "refreshToken": authDTO['AuthenticationResult']['RefreshToken']
                 }, 201
             else:
-                return {"message": "Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
+
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
 
@@ -45,7 +49,7 @@ class AuthController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: {', '.join(missingParams)}"}, 400
+                raise Exception(f"Bad Request: {', '.join(missingParams)}", 400)
                             
             authDTO = AuthService.refresh(requestBody['username'], requestBody['refreshToken'])
 
@@ -54,7 +58,10 @@ class AuthController(Resource):
                     "token": authDTO['AuthenticationResult']['AccessToken']
                 }, 201
             else:
-                return {"message": "Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500

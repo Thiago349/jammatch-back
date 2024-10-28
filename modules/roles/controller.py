@@ -16,14 +16,17 @@ class RolesController(Resource):
         try:
             userInformation = AuthService.validate(request.headers)
             if userInformation == None: 
-                return {"message": f"Unauthorized"}, 401
+                raise Exception("Unauthorized", 401)
 
             requestArgs = request.args
             if 'profileType' not in requestArgs.keys():
-                return {"message": f"Bad Request: 'profileType' required"}, 400
+                raise Exception("Bad Request: 'profileType' required", 400)
             
             roleDTOs = RolesService.getByProfileType(requestArgs['profileType'])
             return roleDTOs, 200
         except Exception as e:
+            if isinstance(e, Exception):
+                return {"message": e.args[0]}, e.args[1]
+            
             api.logger.error("Error: %s", str(e))
             return {"message": f"Internal Server Error: {str(e)}"}, 500
