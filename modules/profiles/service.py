@@ -4,6 +4,7 @@ import werkzeug.datastructures
 from modules.profiles.repository import ProfilesRepository
 from modules.roles.mapper import RolesMapper
 from modules.profiles.mapper import ProfilesMapper
+from werkzeug.exceptions import NotFound
 
 from services.aws.s3.client import BucketClient
 
@@ -23,12 +24,14 @@ class ProfilesService:
 
         BucketClient.uploadFile(file, bucketName, objectName)
         profile = ProfilesRepository.confirmImageStatus(profileId, imageType)
-        return None if profile is None else ProfilesMapper.entityToDTO(profile)
+        profileDTO = ProfilesMapper.entityToDTO(profile)
+        return profileDTO
     
 
     def edit(profileId: uuid.uuid4, payload: dict):
         profile = ProfilesRepository.edit(profileId, payload)
-        return None if profile is None else ProfilesMapper.entityToDTO(profile)
+        profileDTO = ProfilesMapper.entityToDTO(profile)
+        return profileDTO
     
 
     def create(mainId: uuid.uuid4, name: str, type: str):
@@ -39,7 +42,7 @@ class ProfilesService:
     def getById(profileId: uuid.uuid4):
         result = ProfilesRepository.getById(profileId)
         if len(result) == 0:
-            return None
+            return NotFound(f"Not Found: No profile with '{profileId}' id")
             
         profile = result[0][0]
         profileDTO = ProfilesMapper.entityToDTO(profile)

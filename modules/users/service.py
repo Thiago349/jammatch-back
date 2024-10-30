@@ -9,12 +9,13 @@ from modules.spotify_attachments.mapper import SpotifyAttachmentsMapper
 
 from services.aws.cognito.client import CognitoClient
 
+from werkzeug.exceptions import NotFound
 
 class UsersService:
     def getByUsername(username: str):
         result = UsersRepository.getByUsername(username)
         if len(result) == 0:
-            return None
+            raise NotFound(f"No user with {username} username")
 
         user = result[0][0]
         profile = result[0][1]

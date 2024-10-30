@@ -1,5 +1,6 @@
 from modules.auth.repository import AuthRepository
 from modules.utils.authUtils import verifyToken
+from werkzeug.exceptions import Unauthorized
 
 
 class AuthService:  
@@ -15,11 +16,11 @@ class AuthService:
 
     def validate(headers):
         if 'Authorization' not in headers:
-            return None
+            raise Unauthorized("Unauthorized")
         
         token = verifyToken(headers['Authorization'])
         if token == None:
-            return None
+            raise Unauthorized("Unauthorized")
         
         userInformation = AuthRepository.validate(token)
         return userInformation

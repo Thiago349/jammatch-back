@@ -1,6 +1,8 @@
 from modules.profiles.service import ProfilesService
 from modules.profiles.mapper import ProfilesMapper
 from modules.auth.service import AuthService
+
+from werkzeug.exceptions import BadRequest, NotFound, Forbidden, Unauthorized, HTTPException
 from flask_restx import Namespace, Resource
 from flask import request
 
@@ -17,86 +19,73 @@ class ProfilesController(Resource):
             page = int(request.args['page']) if 'page' in request.args.keys() else 1
             searchText = request.args['searchText'] if 'searchText' in request.args.keys() else None
 
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None: 
-                raise Exception(f"Unauthorized", 401)
+            AuthService.validate(request.headers)
 
             profileDTOs = ProfilesService.search(limit, page, searchText)
             return profileDTOs, 200
+        
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
 
 
 @api.route("/<profileId>")
 class ProfilesController(Resource):
     def get(self, profileId):
         try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None: 
-                raise Exception(f"Unauthorized", 401)
+            AuthService.validate(request.headers)
 
-            profileDTO = ProfilesService.getById(profileId)
-            if profileDTO == None:
-                raise Exception(f"Not Found: No profile with '{profileId}' id", 404)
-            
+            profileDTO = ProfilesService.getById(profileId)           
             return profileDTO, 200
+
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
         
 
     def put(self, profileId):
         try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None:
-                raise Exception(f"Unauthorized", 401) 
+            AuthService.validate(request.headers)
 
-            profileDTO = ProfilesService.edit(profileId, request.json)
-            if profileDTO == None:
-                raise Exception(f"Not Found: No profile with '{profileId}' id", 404)
-            
+            profileDTO = ProfilesService.edit(profileId, request.json)           
             return profileDTO, 201
+
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
 
 
 @api.route("/<profileId>/photo")
 class ProfilesController(Resource):
     def put(self, profileId):
         try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation == None: 
-                raise Exception(f"Unauthorized", 401)
+            AuthService.validate(request.headers)
 
             if 'profileImage' not in request.files.keys():
-                raise Exception(f"Bad Request: 'profileImage' required", 400)
+                raise BadRequest(f"Bad Request: 'profileImage' required")
             
             if 'imageType' not in request.form.keys():
-                raise Exception(f"Bad Request: 'imageType' required", 400)
+                raise BadRequest(f"Bad Request: 'imageType' required")
 
             if request.form['imageType'] not in ['photo', 'banner']:
-                raise Exception(f"Bad Request: '{request.form['imageType']}' is not valid for 'imageType'", 400)
+                raise BadRequest(f"Bad Request: '{request.form['imageType']}' is not valid for 'imageType'")
             
             profileDTO = ProfilesService.editImage(profileId, request.files['profileImage'], request.form['imageType'])
-            if profileDTO == None:
-                raise Exception(f"Not Found: No profile with '{profileId}' id", 404)
-            
             return profileDTO, 201
+        
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
 

@@ -20,9 +20,8 @@ class UsersRepository:
             return result
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
         
 
     def create(username: str, email: str):
@@ -38,6 +37,5 @@ class UsersRepository:
             return user
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e

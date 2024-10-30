@@ -1,6 +1,9 @@
 from modules.auth.service import AuthService
+
+from werkzeug.exceptions import BadRequest, Unauthorized, HTTPException
 from flask_restx import Namespace, Resource
 from flask import request
+
 
 api = Namespace(
     "Auth", path="/api/v1/auth"
@@ -18,7 +21,7 @@ class AuthController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                raise Exception(f"Bad Request: {', '.join(missingParams)}", 400)
+                raise BadRequest(f"Bad Request: {', '.join(missingParams)}")
             
             authDTO = AuthService.authenticate(requestBody['username'], requestBody['password'])
             
@@ -28,14 +31,14 @@ class AuthController(Resource):
                     "refreshToken": authDTO['AuthenticationResult']['RefreshToken']
                 }, 201
             else:
-                raise Exception("Unauthorized", 401)
+                raise Unauthorized("Unauthorized")
 
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
 
 
 @api.route("/refresh")
@@ -49,7 +52,7 @@ class AuthController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                raise Exception(f"Bad Request: {', '.join(missingParams)}", 400)
+                raise BadRequest(f"Bad Request: {', '.join(missingParams)}")
                             
             authDTO = AuthService.refresh(requestBody['username'], requestBody['refreshToken'])
 
@@ -58,10 +61,11 @@ class AuthController(Resource):
                     "token": authDTO['AuthenticationResult']['AccessToken']
                 }, 201
             else:
-                raise Exception("Unauthorized", 401)
-        except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
+                raise Unauthorized("Unauthorized")
             
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500

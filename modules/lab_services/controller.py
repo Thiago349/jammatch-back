@@ -1,5 +1,7 @@
 import random
 import requests
+
+from werkzeug.exceptions import BadRequest, Unauthorized, HTTPException
 from flask_restx import Namespace, Resource
 from flask import request
 from services.spotify.endpoints.client import SpotifyClient
@@ -16,34 +18,30 @@ api = Namespace(
 class LabServicesController(Resource):
     def post(self):
         try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation is None:
-                raise Exception("Unauthorized", 401)
+            AuthService.validate(request.headers)
             
             limit = int(request.json['limit']) if 'limit' in request.json.keys() else 10
             requestBody = request.json
             if 'spotifyToken' not in requestBody.keys():
-                raise Exception("Bad Request: 'spotifyToken' required", 400)
+                raise BadRequest("Bad Request: 'spotifyToken' required")
 
             spotifyToken = requestBody['spotifyToken']
 
             return LabServicesService.generateRandomPlaylist(spotifyToken, limit), 201
 
         except Exception as e:
-            if isinstance(e, Exception):
-                return {"message": e.args[0]}, e.args[1]
-            
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500
     
              
 @api.route("/custom")
 class LabServicesController(Resource):
     def post(self):
         try:
-            userInformation = AuthService.validate(request.headers)
-            if userInformation is None:
-                return {"message": "Unauthorized"}, 401
+            AuthService.validate(request.headers)
             
             limit = int(request.json['limit']) if 'limit' in request.json.keys() else 10
             playlistName = request.json['playlistName'] if 'playlistName' in request.json.keys() else None
@@ -54,7 +52,7 @@ class LabServicesController(Resource):
                 if param not in requestBody.keys():
                     missingParams.append(param)
             if len(missingParams) > 0:
-                return {"message": f"Bad Request: '{', '.join(missingParams)}' required"}, 400
+                raise BadRequest(f"Bad Request: '{', '.join(missingParams)}' required")
 
             spotifyToken = requestBody['spotifyToken']
             customParams = requestBody['params']
@@ -62,5 +60,8 @@ class LabServicesController(Resource):
             return LabServicesService.generateCustomPlaylist(spotifyToken, customParams, playlistName, limit), 201
 
         except Exception as e:
+            if isinstance(e, HTTPException):
+                return {"message": e.description}, e.code
+
             api.logger.error("Error: %s", str(e))
-            return {"message": f"Internal Server Error: {str(e)}"}, 500
+            return {"message": "Internal Server Error"}, 500

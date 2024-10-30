@@ -13,7 +13,6 @@ class RolesRepository:
             return roles
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
     

@@ -18,7 +18,6 @@ class SpotifyAttachmentsRepository:
             return spotifyAttachment
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
         

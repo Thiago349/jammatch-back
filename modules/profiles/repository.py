@@ -4,7 +4,9 @@ from sqlalchemy import and_
 from modules.profiles.entity import Profile
 from modules.roles.entity import Role
 from modules.role_attachments.entity import RoleAttachment
-    
+from werkzeug.exceptions import NotFound
+
+
 class ProfilesRepository:
     def search(limit: int, page: int, searchText = None):
         try:
@@ -17,9 +19,8 @@ class ProfilesRepository:
             return result
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
 
 
     def create(mainId: uuid.uuid4, name: str, type: str):
@@ -37,9 +38,8 @@ class ProfilesRepository:
             return profile
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
         
 
     def edit(profileId: uuid.uuid4, payload):
@@ -49,7 +49,7 @@ class ProfilesRepository:
                     ).first()
 
             if profile is None:
-                return None
+                raise NotFound(f"Not Found: No profile with '{profileId}' id")
             
             for key in payload:
                 if key == 'name':
@@ -63,9 +63,8 @@ class ProfilesRepository:
             return profile
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
 
 
     def confirmImageStatus(profileId: uuid.uuid4, imageType: str):
@@ -73,7 +72,10 @@ class ProfilesRepository:
             profile: Profile = db_session.query(Profile
                 ).filter(Profile.id == profileId
                     ).first()
-
+            
+            if profile is None:
+                raise NotFound(f"Not Found: No profile with '{profileId}' id")
+            
             if imageType == 'photo':
                 profile.has_photo = True
             elif imageType == 'banner':
@@ -85,9 +87,8 @@ class ProfilesRepository:
             return profile
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
         
 
     def getById(profileId: uuid.uuid4):
@@ -100,7 +101,6 @@ class ProfilesRepository:
             return result
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
         

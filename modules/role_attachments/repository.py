@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from alchemy import db_session
 from modules.role_attachments.entity import RoleAttachment
+from werkzeug.exceptions import Conflict, NotFound, Forbidden
 
 
 class RoleAttachmentsRepository:
@@ -12,8 +13,7 @@ class RoleAttachmentsRepository:
                     ).first()
             
             if roleAttachment:
-                print(roleAttachment.id)
-                return None
+                raise Conflict("Role already exists for this profile")
         
             roleAttachment = RoleAttachment(
                 profile_id = profileId,
@@ -27,9 +27,8 @@ class RoleAttachmentsRepository:
             return roleAttachment
         
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return None 
+            raise e
     
 
     def delete(roleAttachmentId: uuid.uuid4, profileId: uuid.uuid4):
@@ -40,18 +39,16 @@ class RoleAttachmentsRepository:
 
             
             if roleAttachment:
-                print(roleAttachment.id)
                 if profileId != str(roleAttachment.profile_id):
-                    print(profileId, roleAttachment.profile_id)
-                    return 403
+                    raise Forbidden("Forbidden")
                 roleAttachment.deleted_at = datetime.now()
                 db_session.flush()
                 db_session.commit()
-                return 201
+                return roleAttachment.id
             
-            return 404
-        
+            raise NotFound(f"No role attachment with '{roleAttachmentId}' id")
+            
         except Exception as e:
-            print(f"ERROR: {e}")
             db_session.rollback()
-            return 500 
+            raise e
+            
