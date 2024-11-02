@@ -23,4 +23,6 @@ class AuthService:
             raise Unauthorized("Unauthorized")
         
         userInformation = AuthRepository.validate(token)
+        if userInformation == None:
+            raise Unauthorized("Unauthorized")
         return userInformation
