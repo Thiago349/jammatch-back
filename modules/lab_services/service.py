@@ -12,6 +12,7 @@ class LabServicesService:
             "target_energy": round(random.uniform(0.0, 1.0), 2),
             "target_acousticness": round(random.uniform(0.0, 1.0), 2),
             "target_instrumentalness": round(random.uniform(0.0, 1.0), 2),
+            "target_popularity": random.randint(0, 100),
             "target_loudness": round(random.uniform(-60.0, 0.0), 2),
             "target_happiness": round(random.uniform(0.0, 1.0), 2)
         }
@@ -33,6 +34,7 @@ class LabServicesService:
 
     def generateCustomPlaylist(spotifyToken, customParams, playlistName, limit):
         spotifyParams = SpotifyServicesMapper.paramsDTOToSpotifyParams(customParams)
+        print(customParams)
         spotifyParams["limit"] = limit
 
         spotifyRecommendations = SpotifyClient.getSpotifyRecommendations(spotifyToken, spotifyParams)
