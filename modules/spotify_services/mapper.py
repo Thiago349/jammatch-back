@@ -36,7 +36,6 @@ class SpotifyServicesMapper:
             'acousticness': "target_acousticness",
             'instrumentalness': "target_instrumentalness",
             'popularity': "target_popularity",
-            'loudness': "target_loudness",
             'happiness': "target_happiness"
         }
 
