@@ -15,7 +15,6 @@ class ProfilesRepository:
                 ).offset(offset
                     ).limit(limit
                         ).all()
-            print(result)
             return result
         
         except Exception as e:

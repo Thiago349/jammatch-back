@@ -33,7 +33,6 @@ class LabServicesService:
 
     def generateCustomPlaylist(spotifyToken, customParams, playlistName, limit):
         spotifyParams = SpotifyServicesMapper.paramsDTOToSpotifyParams(customParams)
-        print(customParams)
         spotifyParams["limit"] = limit
 
         spotifyRecommendations = SpotifyClient.getSpotifyRecommendations(spotifyToken, spotifyParams)

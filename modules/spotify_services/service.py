@@ -6,7 +6,6 @@ class CreatePlaylistService:
 
         newPlaylist = SpotifyClient.postPlaylist(spotifyToken, userId, playlistName)
         
-        print(newPlaylist)
         playlistId = newPlaylist['id']
 
         uris = [f"spotify:track:{track_id}" for track_id in tracks]
